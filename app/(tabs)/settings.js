@@ -8,7 +8,7 @@ export default function Settings() {
         <Screen>
 
             <View>
-                <Text>Setting</Text>
+                <Text className="text-white text-3xl font-bold">Setting</Text>
             </View>
 
         </Screen>

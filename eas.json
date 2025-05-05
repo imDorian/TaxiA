@@ -12,10 +12,19 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "URL": "http://26.67.147.7:3000"
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "URL": "http://26.67.147.7:3000"
+      }
     }
   },
   "submit": {
