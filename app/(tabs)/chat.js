@@ -1,30 +1,78 @@
-import { Text, View, ScrollView, Pressable, Image } from "react-native";
+import { Text, View, Pressable, Image, FlatList, Linking, PermissionsAndroid, Platform } from "react-native";
 import Screen from "../../components/Screen";
 import { useState, useEffect, useRef } from "react";
 import { get } from "../../functions/bbdd";
 import logo from '../../assets/logo.png'
 import { capitalizeFirstLetter } from "../../functions/capitalizeFirstLetter";
+import { io } from "socket.io-client";
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [weather, setWeather] = useState({});
-
     const scrollViewRef = useRef(null);
+    const socketRef = useRef(null);
+    const [location, setLocation] = useState({
+        lat: 40.416775,
+        lon: -3.70379
+    });
+
+
     useEffect(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
     }, [messages]);
 
+    useEffect(() => {
+        socketRef.current = io(process.env.URL);
+        socketRef.current.on("newMessage", (message) => {
+            setMessages((prev) => [...prev, message])
+
+        });
+        socketRef.current.on("connect", () => {
+            console.log("Conexión establecida con el servidor");
+        });
+        socketRef.current.on("disconnect", () => {
+            console.log("Conexión cerrada con el servidor");
+        });
+        return () => {
+            socketRef.current.close();
+        };
+    }, []);
+
+
+    const getLocation = async () => {
+        if (Platform.OS === "android") {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+            if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Permiso de ubicación denegado");
+                return;
+            }
+        }
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                setLocation({
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                });
+            },
+            (error) => {
+                console.log(error);
+            },
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        );
+    };
+
 
     async function receiveMessage() {
-        const data = await get("chat", "message");
-        const json = JSON.parse(data);
-        json.map((message) => {
-            setMessages((prev) => [...prev, { message: message.nombre, tipo: message.tipo, ubicacion: message.ubicacion, distancia_km: message.distancia_km, nivel_afluencia: message.nivel_afluencia, motivo: message.motivo, recomendado: message.recomendado }]);
-        });
+        const data = await get("chat", "message", `lat=${location.lat}&lon=${location.lon}`);
+        console.log(data)
     }
 
     async function getWeather() {
-        const data = await get("chat", "weather");
+
+        const data = await get("chat", "weather", `lat=${location.lat}&lon=${location.lon}`);
+        console.log(data)
         setWeather(data);
     }
 
@@ -48,7 +96,54 @@ export default function Chat() {
                 </View>
             </View>
             <View className="flex-col justify-center items-center gap-3 pb-20 min-h-full max-h-full ">
-                <ScrollView
+                <FlatList
+                    data={messages}
+                    renderItem={({ item }) => {
+                        const wazeUrl = `https://waze.com/ul?q=${item.street},${item.city},${item.country}`;
+                        const googleMapsUrl = `https://maps.google.com/?q=${item.street},${item.city},${item.country}`;
+                        return (
+                            <View className="flex flex-col bg-neutral-900 rounded-xl p-3 max-w-full min-w-full gap-y-2">
+                                <View className="flex flex-row justify-start items-center gap-x-2 overflow-ellipsis overflow-hidden min-w-full max-w-full text-nowrap">
+                                    <Image source={{ uri: item.image }} className="w-12 h-12 rounded-full" />
+                                    <Text
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                        className="text-white font-semibold text-lg w-3/4">{item.name}</Text>
+                                </View>
+                                <View className="flex flex-row min-w-full max-w-full p-3 bg-[#1a1a1a] rounded-2xl shadow-2xl shadow-black">
+                                    <View className="flex flex-col justify-start items-start w-1/2">
+                                        <Text className="text-white font-semibold text-wrap text-base">{item.venue}</Text>
+                                        <Text className="text-white text-wrap text-sm">{item.street}</Text>
+
+                                    </View>
+                                    <View className="flex flex-col justify-start items-end  w-1/2">
+                                        <Text className="text-white font-medium text-wrap text-base">{new Date(item.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
+                                        <Text className="text-white text-wrap text-sm">{item.city}, {item.country}</Text>
+                                        <Text className="text-white font-medium text-wrap text-sm">{(item.distance * 1.60934).toFixed(2)} km</Text>
+                                    </View>
+                                </View>
+                                <View className="flex flex-row justify-center items-center gap-x-2 mt-1">
+                                    <Pressable onPress={() => Linking.openURL(googleMapsUrl)} className="bg-blue-600 rounded-xl w-1/2 p-2">
+                                        <Text className="text-white text-center text-base">Ver en Google Maps</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => Linking.openURL(wazeUrl)} className="bg-blue-600 rounded-xl w-1/2 p-2">
+                                        <Text className="text-white text-center text-base">Ver en Waze</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        )
+                    }
+                    }
+                    contentContainerStyle={{ padding: 10 }}
+                    keyExtractor={(item) => item.id}
+                    ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                    ListEmptyComponent={() => (
+                        <Text className="text-white text-lg bg-[#1a1a1a] rounded-xl shadow-2xl shadow-black py-1 px-2">
+                            Soy tu asistente virtual de TaxiA. Estoy aquí para ayudarte a encontrar clientes y gestionar tus viajes. ¿En qué puedo ayudarte hoy?
+                        </Text>
+                    )}
+                />
+                {/* <ScrollView
                     ref={scrollViewRef}
                     onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
                     className="flex-1 rounded-2xl ">
@@ -57,19 +152,7 @@ export default function Chat() {
                         <View className="flex flex-col justify-start items-start min-w-full p-2 gap-y-2 min-h-full">
                             {messages?.map((message, index) => (
                                 <Text key={index} className="text-white text-base bg-blue-700 rounded-xl shadow-2xl shadow-black py-1 px-2">
-                                    {message.message}
-                                    {'\n'}
-                                    {message.tipo}
-                                    {'\n'}
-                                    {message.ubicacion}
-                                    {'\n'}
-                                    A {message.distancia_km} km
-                                    {'\n'}
-                                    Afluencia: {message.nivel_afluencia}
-                                    {'\n'}
-                                    Motivo: {message.motivo}
-                                    {'\n'}
-                                    {message.recomendado ? ' Recomendado' : ' No recomendado'}.
+                                    {message.name}
                                 </Text>
                             ))}
                             {messages.length === 0 && (
@@ -80,7 +163,7 @@ export default function Chat() {
 
                         </View>
                     </View>
-                </ScrollView>
+                </ScrollView> */}
                 <View className="flex flex-row justify-around items-center min-w-full gap-x-2">
                     <Pressable className="bg-blue-600 rounded-xl w-1/2 p-2">
                         <Text className="text-white text-center text-base">Eventos</Text>
