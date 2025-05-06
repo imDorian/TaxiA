@@ -5,17 +5,34 @@ import { get } from "../../functions/bbdd";
 import logo from '../../assets/logo.png'
 import { capitalizeFirstLetter } from "../../functions/capitalizeFirstLetter";
 import { io } from "socket.io-client";
-
+import { getGeoHash } from "../../functions/getGeoHash";
 export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [weather, setWeather] = useState({});
     const scrollViewRef = useRef(null);
     const socketRef = useRef(null);
     const [location, setLocation] = useState({
-        lat: 40.416775,
-        lon: -3.70379
+        geoPoint: "",
+        latitude: 0,
+        longitude: 0
     });
 
+    const getGeo = async () => {
+        try {
+            const geo = getGeoHash();
+            geo.then(({ geoPoint, latitude, longitude }) => {
+                setLocation({ geoPoint, latitude, longitude });
+                getWeather(latitude, longitude);
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    useEffect(() => {
+        getGeo();
+    }, []);
 
     useEffect(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -39,46 +56,20 @@ export default function Chat() {
     }, []);
 
 
-    const getLocation = async () => {
-        if (Platform.OS === "android") {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            );
-            if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-                console.log("Permiso de ubicación denegado");
-                return;
-            }
-        }
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                setLocation({
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                });
-            },
-            (error) => {
-                console.log(error);
-            },
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        );
-    };
-
 
     async function receiveMessage() {
-        const data = await get("chat", "message", `lat=${location.lat}&lon=${location.lon}`);
+        console.log(location.geoPoint)
+        const data = await get("chat", "message", `geoPoint=${location.geoPoint}`);
         console.log(data)
     }
 
-    async function getWeather() {
-
-        const data = await get("chat", "weather", `lat=${location.lat}&lon=${location.lon}`);
-        console.log(data)
+    async function getWeather(latitude, longitude) {
+        console.log(latitude, "latitude", longitude, "longitude ggggggggg")
+        const data = await get("chat", "weather", `lat=${latitude}&lon=${longitude}`);
+        // console.log(data)
         setWeather(data);
     }
 
-    useEffect(() => {
-        getWeather();
-    }, []);
 
 
 
@@ -119,7 +110,7 @@ export default function Chat() {
                                     <View className="flex flex-col justify-start items-end  w-1/2">
                                         <Text className="text-white font-medium text-wrap text-base">{new Date(item.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
                                         <Text className="text-white text-wrap text-sm">{item.city}, {item.country}</Text>
-                                        <Text className="text-white font-medium text-wrap text-sm">{(item.distance * 1.60934).toFixed(2)} km</Text>
+                                        <Text className="text-white font-medium text-wrap text-sm">{item.distance} km</Text>
                                     </View>
                                 </View>
                                 <View className="flex flex-row justify-center items-center gap-x-2 mt-1">
