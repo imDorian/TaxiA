@@ -6,6 +6,7 @@ import logo from '../../assets/logo.png'
 import { capitalizeFirstLetter } from "../../functions/capitalizeFirstLetter";
 import { io } from "socket.io-client";
 import { getGeoHash } from "../../functions/getGeoHash";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [weather, setWeather] = useState({});
@@ -95,11 +96,23 @@ export default function Chat() {
                         return (
                             <View className="flex flex-col bg-neutral-900 rounded-xl p-3 max-w-full min-w-full gap-y-2">
                                 <View className="flex flex-row justify-start items-center gap-x-2 overflow-ellipsis overflow-hidden min-w-full max-w-full text-nowrap">
-                                    <Image source={{ uri: item.image }} className="w-12 h-12 rounded-full" />
-                                    <Text
-                                        numberOfLines={1}
-                                        ellipsizeMode="tail"
-                                        className="text-white font-semibold text-lg w-3/4">{item.name}</Text>
+                                    <View className="flex flex-row justify-start items-center gap-x-2">
+                                        <Image source={{ uri: item.image }} className="w-12 h-12 rounded-full" />
+                                        <Text
+                                            numberOfLines={1}
+                                            ellipsizeMode="tail"
+                                            className="text-white font-semibold text-lg w-3/4">
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                    <View className="flex flex-row justify-start items-center gap-x-2">
+                                        <Pressable onPress={() => {
+                                            console.log("Favorito", item.reason, item.endDate)
+                                        }}>
+                                            <MaterialIcons name="favorite-border" size={24} color="white" />
+                                        </Pressable>
+                                    </View>
+
                                 </View>
                                 <View className="flex flex-row min-w-full max-w-full p-3 bg-[#1a1a1a] rounded-2xl shadow-2xl shadow-black">
                                     <View className="flex flex-col justify-start items-start w-1/2">
@@ -125,7 +138,6 @@ export default function Chat() {
                         )
                     }
                     }
-                    contentContainerStyle={{ padding: 10 }}
                     keyExtractor={(item) => item.id}
                     ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
                     ListEmptyComponent={() => (
