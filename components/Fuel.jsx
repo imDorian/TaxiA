@@ -10,7 +10,7 @@ export default function Fuel() {
         "GNC",
         "Hidrógeno"
     ]
-    const { fuel, handleFuelType } = useRevenueStore();
+    const { fuel, handleFuelType, handleChange } = useRevenueStore();
 
 
 

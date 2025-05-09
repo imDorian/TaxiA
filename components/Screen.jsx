@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, Text, View, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { NavBar } from './NavBar'
 import { Stack } from 'expo-router'
@@ -9,7 +9,11 @@ import logo from '../assets/logo.png'
 export default function Screen({ children }) {
     const insets = useSafeAreaInsets()
     return (
-        <View className="flex-1 items-center px-5 bg-[#0f0f11]">
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 50}
+            style={{ flex: 1, backgroundColor: "#0f0f11", paddingHorizontal: 20 }}
+        >
             <Stack.Screen options={{
                 headerShown: true,
                 headerStyle: {
@@ -22,9 +26,9 @@ export default function Screen({ children }) {
                     fontSize: 20,
                 },
             }} />
+
             {children}
-            {/* <NavBar /> */}
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
