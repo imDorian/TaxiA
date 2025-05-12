@@ -25,6 +25,8 @@ export default function Screen({ children }) {
                     color: "#fff",
                     fontSize: 20,
                 },
+
+
             }} />
 
             {children}

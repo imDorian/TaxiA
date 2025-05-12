@@ -27,6 +27,8 @@ const useRevenueStore = create((set) => ({
         bolt: {},
         freeNow: {},
     },
+    income: [],
+    fuelExpenses: [],
     date: new Date(),
     description: "",
     total: "",
@@ -68,6 +70,13 @@ const useRevenueStore = create((set) => ({
     },
     handleFuelType: (type) => {
         set(prev => ({ ...prev, fuel: { ...prev.fuel, type } }));
+    },
+    getIncomes: async () => {
+        const uri = URL + "/billing/get-billing";
+        const response = await window.fetch(uri);
+        const data = await response.json();
+        console.log(data, "data");
+        set(prev => ({ ...prev, income: data }));
     },
 
 

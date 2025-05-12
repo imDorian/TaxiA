@@ -9,7 +9,7 @@ import useRevenueStore from "../../stores/revenueStore";
 export default function Index() {
     const { createBilling, loadingBilling } = useRevenueStore();
     return (
-        <Screen>
+        <Screen className="p-0">
             <ScrollView
                 contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="handled"
@@ -22,7 +22,7 @@ export default function Index() {
                     <Errors />
                     <Apps />
                     <Fuel />
-                    <Pressable disabled={loadingBilling} onPress={() => createBilling()} className="bg-blue-500 p-5 rounded-xl disabled:opacity-50">
+                    <Pressable disabled={loadingBilling} onPress={() => createBilling()} className="bg-amber-600 p-3 rounded-xl disabled:opacity-50">
                         <Text className="text-white text-xl text-center font-semibold">{loadingBilling ? "Creando Factura..." : "Crear Factura"}</Text>
                     </Pressable>
                 </View>
