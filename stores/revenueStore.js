@@ -35,7 +35,7 @@ const useRevenueStore = create((set, state) => ({
     totalFuel: "",
     totalApps: "",
     loadingBilling: false,
-    autoCalculate: false,
+    autoCalculate: true,
     handleAutoCalculate: () => useRevenueStore.setState(prev => ({ ...prev, autoCalculate: !prev.autoCalculate }))
     ,
 
@@ -81,6 +81,17 @@ const useRevenueStore = create((set, state) => ({
         const response = await window.fetch(uri);
         const data = await response.json();
         set(prev => ({ ...prev, income: data }));
+    },
+    deleteBilling: async (id) => {
+        const uri = URL + "/billing/delete-billing/" + id;
+        const response = await window.fetch(uri, {
+            method: "DELETE",
+        });
+        const data = await response.json();
+        console.log(data.status, "data");
+        if (response.status === 200) {
+            set(prev => ({ ...prev, income: prev.income.filter(item => item._id !== id) }));
+        }
     },
 
 

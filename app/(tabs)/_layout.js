@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Stack, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "react-native";
 export default function TabsLayout() {
@@ -8,6 +8,7 @@ export default function TabsLayout() {
                 backgroundColor: "#0f0f11",
                 height: 80,
             },
+            statusBarStyle: "light",
 
 
             tabBarShowLabel: true,
@@ -23,11 +24,10 @@ export default function TabsLayout() {
 
 
         }} >
-
-            <Tabs.Screen name="index" options={{ title: "Inicio" }} />
-            <Tabs.Screen name="income" options={{ title: "Ganancias" }} />
-            <Tabs.Screen name="chat" options={{ title: "Chat" }} />
-            <Tabs.Screen name="settings" options={{ title: "Ajustes" }} />
+            <Tabs.Screen name="index" options={{ title: "Inicio", }} />
+            <Tabs.Screen name="income" options={{ title: "Ganancias", headerShown: false }} />
+            <Tabs.Screen name="chat" options={{ title: "Chat", headerShown: false }} />
+            <Tabs.Screen name="settings" options={{ title: "Ajustes", headerShown: false }} />
         </Tabs>
     )
 }   

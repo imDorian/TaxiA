@@ -19,7 +19,7 @@ export default function Incomes() {
                 const total = Number(income.earnings?.amount) - Number(income.mistakes?.amount)
                 console.log(fuel, "fuel");
                 return (
-                    <Link asChild href={`/details/${income._id}`} key={income._id} >
+                    <Link asChild href={`/${income._id}`} key={income._id} >
                         <Pressable className="flex-row justify-between bg-[#1c1c1f] p-4 rounded-xl">
                             <Text className="text-white text-lg font-bold">{formattedDate}</Text>
                             <View className="flex-col gap-2 items-end">

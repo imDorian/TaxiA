@@ -16,10 +16,15 @@ export default function Screen({ children }) {
         >
             <Stack.Screen options={{
                 headerShown: true,
+                headerBackButtonMenuEnabled: true,
+                statusBarStyle: "light",
+                headerTintColor: "#fff",
+                headerTitle: "",
                 headerStyle: {
                     backgroundColor: "#0f0f11",
                     height: insets.top + 2,
-                }
+                },
+
                 // headerBackTitleVisible: false,
 
             }} />
