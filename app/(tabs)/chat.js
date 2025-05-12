@@ -58,9 +58,7 @@ export default function Chat() {
 
 
     async function receiveMessage() {
-        console.log(location.geoPoint)
         const data = await get("chat", "message", `geoPoint=${location.geoPoint}`);
-        console.log(data)
     }
 
     async function getWeather(latitude, longitude) {

@@ -4,27 +4,31 @@ import { useEffect, useState } from "react";
 import useRevenueStore from "../stores/revenueStore";
 export default function Revenue() {
 
-    const { earnings, handleChange } = useRevenueStore();
+    const { earnings, handleChange, autoCalculate, handleAutoCalculate } = useRevenueStore();
 
 
 
 
 
-    const handleAutoCalculate = () => {
-        const cash = (Number(earnings.amount) - Number(earnings.card)).toFixed(2);
-        console.log(cash);
-        useRevenueStore.setState(prev => ({ ...prev, earnings: { ...prev.earnings, cash: String(cash) } }));
+    const autoCalculated = () => {
+        if (autoCalculate) {
+            if (earnings.amount !== "" && earnings.card !== "") {
+                const cash = (Number(earnings.amount) - Number(earnings.card)).toFixed(2);
+                useRevenueStore.setState(prev => ({ ...prev, earnings: { ...prev.earnings, cash: String(cash) } }));
+            }
+        }
+        return;
     }
 
     useEffect(() => {
-        handleAutoCalculate();
+        autoCalculated();
     }, [earnings.amount, earnings.card]);
 
     return (
         <Card>
-            <Text className="text-white text-lg font-bold">Ganancias de hoy</Text>
+            <Text className="text-white text-lg font-bold">Facturación de hoy</Text>
             <View className="flex-col gap-1 w-full">
-                <Text className="text-neutral-400 text-base font-semibold">Ganancias totales</Text>
+                <Text className="text-neutral-400 text-base font-semibold">Facturación total</Text>
                 <TextInput
                     className="text-green-300 text-2xl font-bold rounded-2xl border-[0.5px] border-neutral-700 bg-[#1a1a1c] p-2 w-full"
                     placeholder={"€ 209,39"}
@@ -61,8 +65,8 @@ export default function Revenue() {
                     />
                 </View>
                 <View className="flex-col w-1/2">
-                    <Pressable className="bg-green-500/20 p-2 rounded-2xl">
-                        <Text className="text-green-400 text-base">Auto-calcular</Text>
+                    <Pressable onPress={() => handleAutoCalculate()} className={autoCalculate ? "bg-green-500/20 p-2 rounded-2xl shadow-lg active:bg-green-500/30" : "bg-red-500/20 p-2 rounded-2xl shadow-lg active:bg-red-500/30"}>
+                        <Text className={autoCalculate ? "text-green-400 text-base text-center " : "text-red-400 text-base text-center "}>Auto-calcular</Text>
                     </Pressable>
                 </View>
             </View>

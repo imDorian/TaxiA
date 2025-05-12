@@ -19,13 +19,8 @@ export default function Screen({ children }) {
                 headerStyle: {
                     backgroundColor: "#0f0f11",
                     height: insets.top + 2,
-                },
-                headerTitle: "",
-                headerTitleStyle: {
-                    color: "#fff",
-                    fontSize: 20,
-                },
-
+                }
+                // headerBackTitleVisible: false,
 
             }} />
 

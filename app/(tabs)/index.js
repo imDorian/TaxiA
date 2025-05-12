@@ -22,7 +22,7 @@ export default function Index() {
                     <Errors />
                     <Apps />
                     <Fuel />
-                    <Pressable disabled={loadingBilling} onPress={() => createBilling()} className="bg-amber-600 p-3 rounded-xl disabled:opacity-50">
+                    <Pressable disabled={loadingBilling} onPress={() => createBilling()} className="bg-green-800 p-3 rounded-xl disabled:opacity-50">
                         <Text className="text-white text-xl text-center font-semibold">{loadingBilling ? "Creando Factura..." : "Crear Factura"}</Text>
                     </Pressable>
                 </View>
