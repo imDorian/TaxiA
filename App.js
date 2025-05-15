@@ -8,4 +8,9 @@
 //   );
 // }
 
+export default function App() {
+  const foo = undefined;
+  console.log(foo.bar); // Esto debería crashear
 
+  return null;
+}

@@ -4,32 +4,39 @@ import Revenue from "../../components/Revenue";
 import Errors from "../../components/Errors";
 import Apps from "../../components/Apps";
 import Fuel from "../../components/Fuel";
-import '../../global.css'
+import "../../global.css";
 import useRevenueStore from "../../stores/revenueStore";
-import Date from "../../components/Date"
+import Date from "../../components/Date";
 export default function Index() {
-    const { createBilling, loadingBilling } = useRevenueStore();
-    return (
-        <Screen className="">
-            <ScrollView
-                contentContainerStyle={{ flexGrow: 1 }}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-                style={{ flex: 1 }}
-            >
-                <View className="flex-col gap-5 pb-40">
-                    <Date />
-                    <Text className="text-white text-3xl font-bold py-2.5">Facturación</Text>
-                    <Revenue />
-                    <Errors />
-                    <Apps />
-                    <Fuel />
-                    <Pressable disabled={loadingBilling} onPress={() => createBilling()} className="bg-green-800 p-3 rounded-xl disabled:opacity-50">
-                        <Text className="text-white text-xl text-center font-semibold">{loadingBilling ? "Creando Factura..." : "Crear Factura"}</Text>
-                    </Pressable>
-                </View>
-            </ScrollView>
-        </Screen >
-    )
+  const { createBilling, loadingBilling } = useRevenueStore();
+  return (
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+      >
+        <View className="flex-col gap-5 pb-40">
+          <Date />
+          <Text className="text-white text-3xl font-bold py-2.5">
+            Facturación
+          </Text>
+          <Revenue />
+          <Errors />
+          <Apps />
+          <Fuel />
+          <Pressable
+            disabled={loadingBilling}
+            onPress={() => createBilling()}
+            className="bg-green-800 p-3 rounded-xl disabled:opacity-50"
+          >
+            <Text className="text-white text-xl text-center font-semibold">
+              {loadingBilling ? "Creando Factura..." : "Crear Factura"}
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </Screen>
+  );
 }
-
