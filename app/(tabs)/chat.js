@@ -8,6 +8,7 @@ import { io } from "socket.io-client";
 import { getGeoHash } from "../../functions/getGeoHash";
 export default function Chat() {
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [weather, setWeather] = useState({});
   const scrollViewRef = useRef(null);
   const socketRef = useRef(null);
@@ -54,7 +55,18 @@ export default function Chat() {
   }, []);
 
   async function receiveMessage() {
-    const data = await get("chat", "message", `geoPoint=${location.geoPoint}`);
+    setLoading(true);
+    try {
+      const data = await get(
+        "chat",
+        "message",
+        `geoPoint=${location.geoPoint}`,
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function getWeather(latitude, longitude) {
@@ -182,11 +194,12 @@ export default function Chat() {
                     </Pressable>
                 </View> */}
         <Pressable
-          onPress={() => receiveMessage()}
-          className="bg-blue-600 min-w-full rounded-2xl p-4 "
+          onPress={receiveMessage}
+          disabled={loading}
+          className="bg-green-500 min-w-full rounded-2xl p-4 disabled:opacity-50"
         >
-          <Text className="text-white text-center text-xl">
-            Planifica mi jornada
+          <Text className="text-neutral-200 text-center text-xl font-semibold">
+            {loading ? "Planificando tu día..." : "Planifica mi jornada"}
           </Text>
         </Pressable>
       </View>

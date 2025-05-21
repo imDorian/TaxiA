@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
-import Screen from "../components/Screen";
+import Screen from "../../components/Screen";
 import { useLocalSearchParams, Link } from "expo-router";
-import { getDetail } from "../functions/getDetail";
+import { getDetail } from "../../functions/getDetail";
 import { useEffect, useState } from "react";
-import useRevenueStore from "../stores/revenueStore";
+import useRevenueStore from "../../stores/revenueStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function IncomeDetail() {
   const { deleteBilling } = useRevenueStore();
   const { id } = useLocalSearchParams();
@@ -17,11 +18,14 @@ export default function IncomeDetail() {
     "Sabado",
     "Domingo",
   ];
-  // const navigation = useNavigation();
-  useEffect(() => {
-    getDetail(id).then((data) => {
+  async function details() {
+    const token = await AsyncStorage.getItem("token");
+    getDetail(id, token).then((data) => {
       setDetail(data);
     });
+  }
+  useEffect(() => {
+    details();
   }, [id]);
   return (
     <Screen className="">

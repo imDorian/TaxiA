@@ -15,6 +15,5 @@ export async function getGeoHash() {
 
   // Genera el geoHash
   const geoHash = Geohash.encode(latitude, longitude);
-  console.log("GeoHash:", geoHash);
   return { geoPoint: geoHash, latitude, longitude };
 }

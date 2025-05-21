@@ -7,8 +7,32 @@ import Fuel from "../../components/Fuel";
 import "../../global.css";
 import useRevenueStore from "../../stores/revenueStore";
 import Date from "../../components/Date";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { tokenValidation } from "../../functions/tokenValidation";
+import { getUser } from "../../functions/getUser";
 export default function Index() {
   const { createBilling, loadingBilling } = useRevenueStore();
+  const router = useRouter();
+  async function user() {
+    const token = await AsyncStorage.getItem("token");
+    const user = await getUser(token);
+    if (user.error) {
+      router.replace("login/login");
+    }
+    useRevenueStore.setState((prev) => ({
+      ...prev,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      number: user.number,
+      user: user._id,
+    }));
+  }
+  useEffect(() => {
+    user();
+  }, []);
   return (
     <Screen>
       <ScrollView

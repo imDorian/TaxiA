@@ -1,6 +1,7 @@
 import { create } from "zustand";
 // eslint-disable-next-line import/no-unresolved
 import { URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useRevenueStore = create((set, state) => ({
   earnings: {
@@ -27,13 +28,18 @@ const useRevenueStore = create((set, state) => ({
   },
   income: [],
   fuelExpenses: [],
-  date: new Date(2025, 4, 16),
+  date: new Date(),
   description: "",
   total: "",
   totalFuel: "",
   totalApps: "",
   loadingBilling: false,
   autoCalculate: true,
+  user: "",
+  name: "",
+  lastName: "",
+  number: "",
+  email: "",
   handleAutoCalculate: () =>
     useRevenueStore.setState((prev) => ({
       ...prev,
@@ -46,6 +52,7 @@ const useRevenueStore = create((set, state) => ({
     }
   },
   createBilling: async () => {
+    const token = await AsyncStorage.getItem("token");
     if (useRevenueStore.getState().earnings.amount === "") {
       console.log("No se puede crear una factura sin ingresos");
       return;
@@ -58,6 +65,7 @@ const useRevenueStore = create((set, state) => ({
         apps: useRevenueStore.getState().apps,
         description: useRevenueStore.getState().description,
         date: useRevenueStore.getState().date,
+        user: useRevenueStore.getState().user,
       };
 
       const uri = URL + "/billing/create-billing";
@@ -66,6 +74,7 @@ const useRevenueStore = create((set, state) => ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newBilling),
       });
@@ -80,9 +89,14 @@ const useRevenueStore = create((set, state) => ({
   handleFuelType: (type) => {
     set((prev) => ({ ...prev, fuel: { ...prev.fuel, type } }));
   },
-  getIncomes: async () => {
-    const uri = URL + "/billing/get-billing";
-    const response = await window.fetch(uri);
+  getIncomes: async (token) => {
+    const uri =
+      URL + "/billing/get-billings/" + useRevenueStore.getState().user;
+    const response = await window.fetch(uri, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     set((prev) => ({ ...prev, income: data }));
   },
@@ -91,8 +105,6 @@ const useRevenueStore = create((set, state) => ({
     const response = await window.fetch(uri, {
       method: "DELETE",
     });
-    const data = await response.json();
-    console.log(data.status, "data");
     if (response.status === 200) {
       set((prev) => ({
         ...prev,

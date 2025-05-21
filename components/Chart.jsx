@@ -36,7 +36,6 @@ export default function Chart() {
     );
     return dayIncome ? Number(dayIncome.earnings.amount) : 0;
   });
-  console.log(ganancias, "ganancias");
   const data = days.map((day, index) => ({
     Dias: day,
     Ganancias: ganancias[index],
