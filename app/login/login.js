@@ -24,7 +24,7 @@ export default function Login() {
   }
 
   async function removeToken() {
-    await AsyncStorage.getItem("token");
+    await AsyncStorage.removeItem("token");
   }
 
   useEffect(() => {
@@ -36,8 +36,7 @@ export default function Login() {
     if (userData.email && userData.password) {
       try {
         const token = await login(userData);
-        console.log(token);
-        AsyncStorage.setItem("token", token); // espera a que se guarde el token
+        await AsyncStorage.setItem("token", token); // espera a que se guarde el token
         router.replace("/(tabs)/"); // solo entonces navega
       } catch (error) {
         console.error("Error durante el login:", error);

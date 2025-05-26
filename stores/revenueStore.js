@@ -40,6 +40,7 @@ const useRevenueStore = create((set, state) => ({
   lastName: "",
   number: "",
   email: "",
+  chat: [],
   handleAutoCalculate: () =>
     useRevenueStore.setState((prev) => ({
       ...prev,

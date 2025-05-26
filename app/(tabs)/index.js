@@ -10,7 +10,6 @@ import Date from "../../components/Date";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { tokenValidation } from "../../functions/tokenValidation";
 import { getUser } from "../../functions/getUser";
 export default function Index() {
   const { createBilling, loadingBilling } = useRevenueStore();
@@ -19,6 +18,7 @@ export default function Index() {
     const token = await AsyncStorage.getItem("token");
     const user = await getUser(token);
     if (user.error) {
+      await AsyncStorage.removeItem("token");
       router.replace("login/login");
     }
     useRevenueStore.setState((prev) => ({

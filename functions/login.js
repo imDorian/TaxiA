@@ -14,8 +14,6 @@ export default async function login(userData) {
     if (response.ok) {
       const json = await response.json();
       return json;
-    } else {
-      console.log(response);
     }
   } catch (error) {
     console.error(error);
