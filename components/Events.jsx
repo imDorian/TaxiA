@@ -12,7 +12,9 @@ export default function Events({ events }) {
   };
   return (
     <FlatList
-      data={events}
+      data={events?.sort(
+        (a, b) => new Date(a.date.localDate) - new Date(b.date.localDate),
+      )}
       renderItem={({ item }) => {
         const {
           name,
