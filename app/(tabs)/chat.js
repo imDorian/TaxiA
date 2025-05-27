@@ -1,10 +1,9 @@
-import { Text, View, Pressable, Image, FlatList, Linking } from "react-native";
+import { Text, View, Pressable, Image } from "react-native";
 import Screen from "../../components/Screen";
 import { useState, useEffect, useRef } from "react";
 import { get } from "../../functions/bbdd";
 import logo from "../../assets/logo.png";
 import { capitalizeFirstLetter } from "../../functions/capitalizeFirstLetter";
-import { io } from "socket.io-client";
 import { getGeoHash } from "../../functions/getGeoHash";
 import { getChat } from "../../functions/getChat";
 import AsyncStorage from "@react-native-async-storage/async-storage";

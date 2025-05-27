@@ -102,9 +102,13 @@ const useRevenueStore = create((set, state) => ({
     set((prev) => ({ ...prev, income: data }));
   },
   deleteBilling: async (id) => {
+    const token = await AsyncStorage.getItem("token");
     const uri = URL + "/billing/delete-billing/" + id;
     const response = await window.fetch(uri, {
       method: "DELETE",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     });
     if (response.status === 200) {
       set((prev) => ({
