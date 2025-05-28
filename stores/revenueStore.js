@@ -8,6 +8,7 @@ const useRevenueStore = create((set, state) => ({
     amount: "",
     card: "",
     cash: "",
+    tips: "",
   },
   fuel: {
     type: "Gasolina",
@@ -49,7 +50,10 @@ const useRevenueStore = create((set, state) => ({
   handleChange: (key, key2, value) => {
     const regex = /^\d*\.?\d{0,2}$/;
     if (regex.test(value) || value === "") {
-      set((prev) => ({ ...prev, [key]: { ...prev[key], [key2]: value } }));
+      set((prev) => ({
+        ...prev,
+        [key]: { ...prev[key], [key2]: value },
+      }));
     }
   },
   createBilling: async () => {
